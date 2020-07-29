@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-/*Route::get('/', 'HomeController@index');
-Route::get('php', 'HomeController@phpPage');
-Route::get('js', 'HomeController@jsPage');*/
 
-Route::get('/', 'ReceipesController@index');
+Route::resource('receipe', 'ReceipeController');
 
