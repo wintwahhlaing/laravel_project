@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Receipe;
 use Illuminate\Http\Request;
 
 class ReceipeController extends Controller
 {
+    
+     public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +21,8 @@ class ReceipeController extends Controller
      */
     public function index()
     {
-        $data = Receipe::all();
+       $data = Receipe::where('author_id', auth()->id())->get();
+
         return view('home',compact('data'));
     }
 
@@ -25,7 +33,8 @@ class ReceipeController extends Controller
      */
     public function create()
     {
-        return view('create');
+        $category = Category::all();
+        return view('create',compact('category'));
     }
 
     /**
@@ -37,13 +46,16 @@ class ReceipeController extends Controller
     public function store()    
     {
         $validatedData = request()->validate([
-        'name' => 'required',
-        'ingredients' => 'required',
-        'category' => 'required',
-    ]);
+            'name' => 'required',
+            'ingredients' => 'required',
+            'category' => 'required',
+        ]);
 
-        Receipe::create($validatedData);
-        return redirect('receipe');
+
+        Receipe::create($validatedData + ['author_id' => auth()->id()]);
+
+
+        return redirect("receipe");
     }
 
     /**
@@ -54,7 +66,9 @@ class ReceipeController extends Controller
      */
     public function show(Receipe $receipe)
     {
-        return view("show",compact('receipe'));
+
+       $this->authorize('view',$receipe);
+        return view('show',compact('receipe'));
     }
 
     /**
@@ -65,7 +79,8 @@ class ReceipeController extends Controller
      */
     public function edit(Receipe $receipe)
     {
-        return view('edit',compact('receipe'));
+        $category = Category::all();
+        return view('edit',compact('receipe','category'));
     }
 
     /**
@@ -98,4 +113,6 @@ class ReceipeController extends Controller
         $receipe->delete();
         return redirect('receipe');
     }
+
+
 }
