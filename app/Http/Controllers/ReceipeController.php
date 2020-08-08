@@ -11,7 +11,7 @@ class ReceipeController extends Controller
     
      public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->only('show');
     }
 
     /**
@@ -79,6 +79,8 @@ class ReceipeController extends Controller
      */
     public function edit(Receipe $receipe)
     {
+        $this->authorize('view',$receipe);
+
         $category = Category::all();
         return view('edit',compact('receipe','category'));
     }
@@ -92,6 +94,8 @@ class ReceipeController extends Controller
      */
     public function update( Receipe $receipe)
     {
+            $this->authorize('view',$receipe);
+
             $validatedData = request()->validate([
             'name' => 'required',
             'ingredients' => 'required',
@@ -110,6 +114,8 @@ class ReceipeController extends Controller
      */
     public function destroy(Receipe $receipe)
     {
+        $this->authorize('view',$receipe);
+        
         $receipe->delete();
         return redirect('receipe');
     }
