@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Category;
+use App\Mail\ReceipeStored;
 use Illuminate\Database\Eloquent\Model;
 
 class Receipe extends Model
@@ -11,7 +12,19 @@ class Receipe extends Model
 
     // protected $guarded = [];
 
-     public function categories()
+    protected static function boot()
+    {
+    	parent::boot();
+
+    	static::created(function($receipe){
+		
+			session()->flash("message",'Receipe has created successfully!');
+
+        	\Mail::to('wintwahhlaing52016@gmail.com')->send(new ReceipeStored($receipe));
+    	});
+    }
+
+    public function categories()
     {
         return $this->belongsTo(Category::class,'category');
     }

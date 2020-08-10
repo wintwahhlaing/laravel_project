@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Mail\ReceipeStored;
 use App\Receipe;
+use App\test;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ReceipeController extends Controller
 {
@@ -21,6 +24,7 @@ class ReceipeController extends Controller
      */
     public function index()
     {
+        //dd(app('test'));
        $data = Receipe::where('author_id', auth()->id())->get();
 
         return view('home',compact('data'));
@@ -52,8 +56,7 @@ class ReceipeController extends Controller
         ]);
 
 
-        Receipe::create($validatedData + ['author_id' => auth()->id()]);
-
+        $receipe = Receipe::create($validatedData + ['author_id' => auth()->id()]);
 
         return redirect("receipe");
     }
@@ -66,6 +69,7 @@ class ReceipeController extends Controller
      */
     public function show(Receipe $receipe)
     {
+        //dd($test);
 
        $this->authorize('view',$receipe);
         return view('show',compact('receipe'));
@@ -103,7 +107,7 @@ class ReceipeController extends Controller
         ]);
 
         $receipe->update($validatedData);
-        return redirect('receipe');
+        return redirect('receipe')->with("message",'Receipe is successfully edit!');
     }
 
     /**
@@ -117,7 +121,7 @@ class ReceipeController extends Controller
         $this->authorize('view',$receipe);
         
         $receipe->delete();
-        return redirect('receipe');
+        return redirect('receipe')->with("message",'Receipe is successfully delete!');
     }
 
 

@@ -1,6 +1,8 @@
 <?php
 
+use App\Receipe;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+/*Route::get('/',function(){
+	dd(app('test'));
+});*/
 
 Route::resource('receipe', 'ReceipeController');
 Route::get('home', 'HomeController@index');
