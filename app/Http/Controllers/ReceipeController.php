@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Events\ReceipeCreatedEvent;
 use App\Mail\ReceipeStored;
+use App\Notifications\ReceipeStoreNotification;
 use App\Receipe;
+use App\User;
 use App\test;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -25,8 +28,17 @@ class ReceipeController extends Controller
     public function index()
     {
         //dd(app('test'));
+
+        /*$user = User::find(4);
+        //dd($user);
+        $user->notify( new ReceipeStoreNotification());
+        echo "sent notification";
+        exit();*/
+
        $data = Receipe::where('author_id', auth()->id())->get();
 
+       $data = Receipe::paginate(5);
+       //dd($data);
         return view('home',compact('data'));
     }
 
@@ -55,8 +67,9 @@ class ReceipeController extends Controller
             'category' => 'required',
         ]);
 
-
         $receipe = Receipe::create($validatedData + ['author_id' => auth()->id()]);
+
+         //event(new ReceipeCreatedEvent($receipe));
 
         return redirect("receipe");
     }
