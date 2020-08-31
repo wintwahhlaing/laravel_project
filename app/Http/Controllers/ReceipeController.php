@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\Events\ReceipeCreatedEvent;
+use App\Http\Requests\ReceipeStoreRequest;
 use App\Mail\ReceipeStored;
 use App\Notifications\ReceipeStoreNotification;
 use App\Receipe;
@@ -59,17 +60,24 @@ class ReceipeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store()    
+ public function store(ReceipeStoreRequest $request)
     {
-        $validatedData = request()->validate([
+        $validatedData = $request->validated();
+        
+       /* $validatedData = request()->validate([
             'name' => 'required',
             'ingredients' => 'required',
             'category' => 'required',
-        ]);
+            'myimage' => 'required|image',
+        ]);*/
 
-        $receipe = Receipe::create($validatedData + ['author_id' => auth()->id()]);
+        //upload image
+        $imageName = date('YmdHis') . "." . $request->myimage->getClientOriginalExtension();
+        request()->myimage->move(public_path('images'), $imageName);
 
-         //event(new ReceipeCreatedEvent($receipe));
+        $receipe = Receipe::create($validatedData + ['author_id' => auth()->id(),'image'=>$imageName]);
+
+        // event(new ReceipeCreatedEvent($receipe));
 
         return redirect("receipe");
     }
@@ -117,9 +125,25 @@ class ReceipeController extends Controller
             'name' => 'required',
             'ingredients' => 'required',
             'category' => 'required',
-        ]);
+             'myimage' => 'image',
+            ]);
 
-        $receipe->update($validatedData);
+            if (request()->myimage) {
+
+                $imageName = date('YmdHis') . "." . request()->myimage->getClientOriginalExtension();
+                request()->myimage->move(public_path('images'), $imageName);
+                }
+
+                //$receipe->update($validatedData + ['image'=> empty($imageName) ? null : $imageName]);
+
+                 if(!empty($imageName)){
+                    $receipe->update($validatedData + ['image'=>$imageName]);
+                }else {
+                        $receipe->update($validatedData);
+                }
+
+
+        //$receipe->update($validatedData);
         return redirect('receipe')->with("message",'Receipe is successfully edit!');
     }
 

@@ -22,6 +22,11 @@
                     
                     <div class="card-body">
                       <h3>{{$receipe->name}}</h3>
+
+                      @if($receipe->image)
+                        <img src="{{'/images/'.$receipe->image}}" width="50" height="50">
+                    @endif
+
                       <p class="card-text">{{ $receipe->categories->name }}</p>
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">

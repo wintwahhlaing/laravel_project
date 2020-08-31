@@ -15,7 +15,7 @@
 			    </div>
 		@endif
 
-   		<form method="POST" action="/receipe">
+   	<form method="POST" action="/receipe" enctype="multipart/form-data">
    			{{ csrf_field() }}
 
 		  <div class="form-group">
@@ -41,6 +41,11 @@
 		  	</select>
 
 		  </div>
+
+		  	<div class="form-group">
+		        <label for=""> Receipe Image</label><br>
+		        <input type="file" name="myimage">
+      		</div>
 		  
 		  <button type="submit" class="btn btn-primary">Submit</button> 
 		</form>
